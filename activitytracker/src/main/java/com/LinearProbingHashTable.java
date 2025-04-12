@@ -1,8 +1,33 @@
 package com;
 
-public class LinearProbingHastable<K, V> {
+import java.util.Arrays;
+import java.util.Collection;
 
-    private static class Entry<K, V> {
+public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
+
+    @Override
+    public Collection<K> keys() {
+        return Arrays.stream(table)
+                .filter(e -> e != null && !e.isDeleted)
+                .map(e -> e.key)
+                .toList();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return Arrays.stream(table)
+                .filter(e -> e != null && !e.isDeleted)
+                .map(entry -> entry.value)
+                .toList();
+
+    }
+
+    @Override
+    public Collection<SimpleMap.Entry<K, V>> entries() {
+        return Arrays.asList(table);
+    }
+
+    private static class Entry<K, V> implements SimpleMap.Entry<K, V> {
         K key;
         V value;
         boolean isDeleted;
@@ -12,18 +37,28 @@ public class LinearProbingHastable<K, V> {
             this.value = value;
             this.isDeleted = false;
         }
+
+        @Override
+        public K key() {
+            return key;
+        }
+
+        @Override
+        public V value() {
+            return value;
+        }
     }
 
     private Entry<K, V>[] table;
     private int size;
 
     @SuppressWarnings("unchecked")
-    public LinearProbingHastable(int capacity) {
+    public LinearProbingHashTable(int capacity) {
         table = new Entry[capacity];
         size = 0;
     }
 
-    public LinearProbingHastable() {
+    public LinearProbingHashTable() {
         this(16);
     }
 
@@ -31,7 +66,8 @@ public class LinearProbingHastable<K, V> {
         return (key.hashCode() & 0x7FFFFFFF) % table.length;
     }
 
-    public void put(K key, V value) {
+    @Override
+    public V put(K key, V value) {
         int index = hash(key);
         int startIndex = index;
 
@@ -40,7 +76,7 @@ public class LinearProbingHastable<K, V> {
             if (entry == null || entry.isDeleted || entry.key.equals(key)) {
                 table[index] = new Entry<>(key, value);
                 size++;
-                return;
+                return null;
             }
             index = (index + 1) % table.length;
         } while (index != startIndex);
@@ -48,6 +84,7 @@ public class LinearProbingHastable<K, V> {
         throw new IllegalStateException("HashTable is full");
     }
 
+    @Override
     public V get(K key) {
         int index = hash(key);
         int startIndex = index;
@@ -64,6 +101,7 @@ public class LinearProbingHastable<K, V> {
         return null;
     }
 
+    @Override
     public V remove(K key) {
         int index = hash(key);
         int startIndex = index;
@@ -87,10 +125,12 @@ public class LinearProbingHastable<K, V> {
         return get(key) != null;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }

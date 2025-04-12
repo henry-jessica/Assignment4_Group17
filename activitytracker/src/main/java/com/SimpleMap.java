@@ -1,9 +1,14 @@
 package com;
 
 import java.util.Collection;
-import java.util.Map.Entry;
 
 public interface SimpleMap<K, V> {
+    interface Entry<K, V> {
+        K key();
+
+        V value();
+    }
+
     public int size();
 
     public boolean isEmpty();
