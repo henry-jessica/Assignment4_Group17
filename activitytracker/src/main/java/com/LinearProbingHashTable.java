@@ -1,9 +1,13 @@
 package com;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
+
+    private static final double LOAD_FACTOR = 0.75;
 
     @Override
     public Collection<K> keys() {
@@ -19,12 +23,17 @@ public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
                 .filter(e -> e != null && !e.isDeleted)
                 .map(entry -> entry.value)
                 .toList();
-
     }
 
     @Override
     public Collection<SimpleMap.Entry<K, V>> entries() {
-        return Arrays.asList(table);
+        List<SimpleMap.Entry<K, V>> result = new ArrayList<>();
+        for (Entry<K, V> e : table) {
+            if (e != null && !e.isDeleted) {
+                result.add(new Entry<>(e.key, e.value));
+            }
+        }
+        return result;
     }
 
     private static class Entry<K, V> implements SimpleMap.Entry<K, V> {
@@ -62,26 +71,64 @@ public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
         this(16);
     }
 
+    private int hash(K key, int capacity) {
+        return (key.hashCode() & 0x7FFFFFFF) % capacity;
+    }
+
     private int hash(K key) {
-        return (key.hashCode() & 0x7FFFFFFF) % table.length;
+        return hash(key, table.length);
     }
 
     @Override
     public V put(K key, V value) {
+        if ((double) (size + 1) / table.length > LOAD_FACTOR) {
+            resize();
+        }
+
         int index = hash(key);
         int startIndex = index;
 
         do {
             Entry<K, V> entry = table[index];
-            if (entry == null || entry.isDeleted || entry.key.equals(key)) {
+            if (entry == null || entry.isDeleted) {
                 table[index] = new Entry<>(key, value);
                 size++;
                 return null;
+            }
+            if (entry.key.equals(key)) {
+                V oldValue = entry.value;
+                entry.value = value;
+                return oldValue;
             }
             index = (index + 1) % table.length;
         } while (index != startIndex);
 
         throw new IllegalStateException("HashTable is full");
+    }
+
+    private void resize() {
+        Entry<K, V>[] oldTable = table;
+        int newCapacity = oldTable.length * 2;
+
+        @SuppressWarnings("unchecked")
+        Entry<K, V>[] newTable = new Entry[newCapacity];
+        table = newTable;
+        size = 0;
+
+        for (Entry<K, V> entry : oldTable) {
+            if (entry != null && !entry.isDeleted) {
+                reinsert(entry.key, entry.value);
+            }
+        }
+    }
+
+    private void reinsert(K key, V value) {
+        int index = hash(key, table.length);
+        while (table[index] != null) {
+            index = (index + 1) % table.length;
+        }
+        table[index] = new Entry<>(key, value);
+        size++;
     }
 
     @Override
