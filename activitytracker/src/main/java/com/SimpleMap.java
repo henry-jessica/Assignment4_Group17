@@ -1,6 +1,7 @@
 package com;
 
-import java.util.Iterator;
+import java.util.Collection;
+import java.util.Map.Entry;
 
 public interface SimpleMap<K, V> {
     public int size();
@@ -13,9 +14,9 @@ public interface SimpleMap<K, V> {
 
     public V remove(K k);
 
-    public Iterator<K> keys();
+    public Collection<K> keys();
 
-    public Iterator<V> values();
+    public Collection<V> values();
 
-    public Iterator<Entry<K, V>> entries();
+    public Collection<Entry<K, V>> entries();
 }
