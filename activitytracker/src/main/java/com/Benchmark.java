@@ -1,6 +1,9 @@
 package com;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 public class Benchmark {
 
@@ -61,7 +64,7 @@ public class Benchmark {
             List<String> baseKeys = allKeys.subList(0, baseSize);
             List<String> sampleKeys = allKeys.subList(baseSize, MAX_KEYS);
 
-            SimpleMap<String, Integer> linearProbingMap = new LinearProbingHashTable<>(MAX_KEYS);
+            SimpleMap<String, Integer> linearProbingMap = new LinearProbingHashTable<>(2 * MAX_KEYS);
             benchmark("LinearProbing", linearProbingMap, baseKeys, sampleKeys);
         }
 
@@ -70,7 +73,7 @@ public class Benchmark {
             List<String> baseKeys = allKeys.subList(0, baseSize);
             List<String> sampleKeys = allKeys.subList(baseSize, MAX_KEYS);
 
-            SimpleMap<String, Integer> separateChainingMap = new SeparateChainingHashTable<>(MAX_KEYS);
+            SimpleMap<String, Integer> separateChainingMap = new SeparateChainingHashTable<>(2 * MAX_KEYS);
             benchmark("SeparateChaining", separateChainingMap, baseKeys, sampleKeys);
         }
     }
