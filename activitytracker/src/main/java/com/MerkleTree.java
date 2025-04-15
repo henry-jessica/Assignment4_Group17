@@ -1,21 +1,19 @@
 package com;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A complete Merkle Tree implementation with proof generation and verification.
+ * A cryptographically secure Merkle Tree implementation with directional proof
+ * generation.
  */
 public class MerkleTree {
 
     private Node root;
     private List<Node> leaves;
 
-    /**
-     * Constructs the Merkle Tree from data blocks.
-     *
-     * @param dataBlocks input data blocks
-     */
     public MerkleTree(List<String> dataBlocks) {
         if (dataBlocks == null || dataBlocks.isEmpty()) {
             throw new IllegalArgumentException("Input data cannot be empty");
@@ -28,18 +26,11 @@ public class MerkleTree {
         this.root = buildTree(leaves);
     }
 
-    /** @return the Merkle Root hash */
     public String getRootHash() {
         return root.hash;
     }
 
-    /**
-     * Returns Merkle proof for a given data block.
-     *
-     * @param data input data block
-     * @return list of sibling hashes from leaf to root
-     */
-    public List<String> getProof(String data) {
+    public List<ProofNode> getProof(String data) {
         String targetHash = hash(data);
         Node current = null;
         for (Node leaf : leaves) {
@@ -51,34 +42,29 @@ public class MerkleTree {
         if (current == null)
             throw new IllegalArgumentException("Data not found in tree");
 
-        List<String> proof = new ArrayList<>();
+        List<ProofNode> proof = new ArrayList<>();
         while (current.parent != null) {
-            Node sibling = current.parent.left == current ? current.parent.right : current.parent.left;
-            proof.add(sibling.hash);
-            current = current.parent;
+            Node parent = current.parent;
+            boolean isLeft = (parent.left != current); // sibling is on left if current is right
+            Node sibling = isLeft ? parent.left : parent.right;
+            proof.add(new ProofNode(sibling.hash, isLeft));
+            current = parent;
         }
         return proof;
     }
 
-    /**
-     * Verifies a Merkle proof.
-     *
-     * @param data  original data
-     * @param proof list of sibling hashes
-     * @param root  expected Merkle root
-     * @return true if valid
-     */
-    public static boolean verifyProof(String data, List<String> proof, String root) {
-        String hash = hash(data);
-        for (String siblingHash : proof) {
-            hash = hash(hash + siblingHash);
+    public static boolean verifyProof(String data, List<ProofNode> proof, String rootHash) {
+        String computed = hash(data);
+        for (ProofNode node : proof) {
+            if (node.isLeft) {
+                computed = hash(node.hash + computed);
+            } else {
+                computed = hash(computed + node.hash);
+            }
         }
-        return hash.equals(root);
+        return computed.equals(rootHash);
     }
 
-    /**
-     * Recursively builds tree upward.
-     */
     private Node buildTree(List<Node> nodes) {
         while (nodes.size() > 1) {
             List<Node> parents = new ArrayList<>();
@@ -96,18 +82,21 @@ public class MerkleTree {
         return nodes.get(0);
     }
 
-    /**
-     * Simple polynomial hash function
-     */
     private static String hash(String input) {
-        int h = 0;
-        for (char c : input.toCharArray()) {
-            h = 31 * h + c;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 not supported", e);
         }
-        return Integer.toHexString(h);
     }
 
-    /** Node class for Merkle Tree */
+    /** Internal tree node */
     private static class Node {
         String hash;
         Node left, right, parent;
@@ -120,6 +109,17 @@ public class MerkleTree {
             this.hash = hash;
             this.left = left;
             this.right = right;
+        }
+    }
+
+    /** Represents a step in the Merkle proof */
+    public static class ProofNode {
+        public final String hash;
+        public final boolean isLeft;
+
+        public ProofNode(String hash, boolean isLeft) {
+            this.hash = hash;
+            this.isLeft = isLeft;
         }
     }
 }
