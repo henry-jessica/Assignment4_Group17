@@ -1,4 +1,4 @@
-package com;
+package activitytracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,13 +9,13 @@ import java.util.UUID;
  * A benchmark for testing the Merkle Tree's ability to detect tampering in a
  * collection of logs.
  */
-public class MerkleTamperBenchmark {
+public class merkleTamperBenchmark {
 
     private static final int LOG_COUNT = 1000;
 
     public static void main(String[] args) {
         List<String> originalLogs = generateLogs(LOG_COUNT);
-        MerkleTree tree = new MerkleTree(originalLogs);
+        merkleTree tree = new merkleTree(originalLogs);
         String originalRoot = tree.getRootHash();
 
         int passedTests = 0;
@@ -64,7 +64,7 @@ public class MerkleTamperBenchmark {
 
     private static boolean tamperingDetected(List<String> tamperedLogs, String originalRoot) {
         try {
-            MerkleTree tamperedTree = new MerkleTree(tamperedLogs);
+            merkleTree tamperedTree = new merkleTree(tamperedLogs);
             return !tamperedTree.getRootHash().equals(originalRoot);
         } catch (Exception e) {
             return true;

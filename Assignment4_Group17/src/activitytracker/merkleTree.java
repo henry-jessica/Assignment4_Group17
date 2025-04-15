@@ -1,4 +1,4 @@
-package com;
+package activitytracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import java.util.List;
  * A merkle tree implementation with hash chaining for ensuring the integrity of
  * datasets like activity logs
  */
-public class MerkleTree {
+public class merkleTree {
 
     private Node root;
     private List<Node> leaves;
 
-    public MerkleTree(List<String> dataBlocks) {
+    public merkleTree(List<String> dataBlocks) {
         if (dataBlocks == null || dataBlocks.isEmpty()) {
             throw new IllegalArgumentException("Input data cannot be empty");
         }

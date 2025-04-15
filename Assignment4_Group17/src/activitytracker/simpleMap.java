@@ -1,4 +1,4 @@
-package com;
+package activitytracker;
 
 import java.util.Collection;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-public interface SimpleMap<K, V> {
+public interface simpleMap<K, V> {
     /**
      * Represents a key-value pair (entry) in the map.
      *

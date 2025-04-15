@@ -1,11 +1,11 @@
-package com;
+package activitytracker;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class Benchmark {
+public class benchmark {
 
     private static final int MAX_KEYS = 10_000_000;
     private static final int[] SAMPLE_SIZES = { 100, 500, 1_000, 5_000, 10_000, 25_000, 50_000, 75_000, 100_000,
@@ -19,7 +19,7 @@ public class Benchmark {
         return keys;
     }
 
-    private static void benchmark(String name, SimpleMap<String, Integer> map, List<String> baseKeys,
+    private static void benchmark(String name, simpleMap<String, Integer> map, List<String> baseKeys,
             List<String> sampleKeys) {
         // Prepopulate map with baseKeys
         for (String k : baseKeys) {
@@ -64,7 +64,7 @@ public class Benchmark {
             List<String> baseKeys = allKeys.subList(0, baseSize);
             List<String> sampleKeys = allKeys.subList(baseSize, MAX_KEYS);
 
-            SimpleMap<String, Integer> linearProbingMap = new LinearProbingHashTable<>(2 * MAX_KEYS);
+            simpleMap<String, Integer> linearProbingMap = new linearProbingHashTable<>(2 * MAX_KEYS);
             benchmark("LinearProbing", linearProbingMap, baseKeys, sampleKeys);
         }
 
@@ -73,7 +73,7 @@ public class Benchmark {
             List<String> baseKeys = allKeys.subList(0, baseSize);
             List<String> sampleKeys = allKeys.subList(baseSize, MAX_KEYS);
 
-            SimpleMap<String, Integer> separateChainingMap = new SeparateChainingHashTable<>(2 * MAX_KEYS);
+            simpleMap<String, Integer> separateChainingMap = new separateChainingHashTable<>(2 * MAX_KEYS);
             benchmark("SeparateChaining", separateChainingMap, baseKeys, sampleKeys);
         }
     }

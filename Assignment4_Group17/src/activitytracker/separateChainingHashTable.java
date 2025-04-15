@@ -1,4 +1,4 @@
-package com;
+package activitytracker;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,12 +12,12 @@ import java.util.List;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-public class SeparateChainingHashTable<K, V> implements SimpleMap<K, V> {
+public class separateChainingHashTable<K, V> implements simpleMap<K, V> {
 
     /**
      * Represents a key-value pair stored in the hash table.
      */
-    private static class Entry<K, V> implements SimpleMap.Entry<K, V> {
+    private static class Entry<K, V> implements simpleMap.Entry<K, V> {
         final K key;
         V value;
 
@@ -55,7 +55,7 @@ public class SeparateChainingHashTable<K, V> implements SimpleMap<K, V> {
      * @param capacity the initial number of buckets
      */
     @SuppressWarnings("unchecked")
-    public SeparateChainingHashTable(int capacity) {
+    public separateChainingHashTable(int capacity) {
         table = new List[capacity];
         for (int i = 0; i < capacity; i++) {
             table[i] = new LinkedList<>();
@@ -213,8 +213,8 @@ public class SeparateChainingHashTable<K, V> implements SimpleMap<K, V> {
 
     /** @return a collection of all key-value entries */
     @Override
-    public Collection<SimpleMap.Entry<K, V>> entries() {
-        List<SimpleMap.Entry<K, V>> result = new ArrayList<>();
+    public Collection<simpleMap.Entry<K, V>> entries() {
+        List<simpleMap.Entry<K, V>> result = new ArrayList<>();
         for (List<Entry<K, V>> bucket : table) {
             result.addAll(bucket);
         }

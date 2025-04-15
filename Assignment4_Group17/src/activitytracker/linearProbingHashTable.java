@@ -1,4 +1,4 @@
-package com;
+package activitytracker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import java.util.List;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of values
  */
-public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
+public class linearProbingHashTable<K, V> implements simpleMap<K, V> {
 
     private static final double LOAD_FACTOR = 0.75;
 
@@ -48,8 +48,8 @@ public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
      * @return a collection of key-value entries
      */
     @Override
-    public Collection<SimpleMap.Entry<K, V>> entries() {
-        List<SimpleMap.Entry<K, V>> result = new ArrayList<>();
+    public Collection<simpleMap.Entry<K, V>> entries() {
+        List<simpleMap.Entry<K, V>> result = new ArrayList<>();
         for (Entry<K, V> e : table) {
             if (e != null && !e.isDeleted) {
                 result.add(new Entry<>(e.key, e.value));
@@ -61,7 +61,7 @@ public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
     /**
      * Represents a key-value pair in the hash table.
      */
-    private static class Entry<K, V> implements SimpleMap.Entry<K, V> {
+    private static class Entry<K, V> implements simpleMap.Entry<K, V> {
         K key;
         V value;
         boolean isDeleted;
@@ -100,7 +100,7 @@ public class LinearProbingHashTable<K, V> implements SimpleMap<K, V> {
      * @param capacity initial number of slots
      */
     @SuppressWarnings("unchecked")
-    public LinearProbingHashTable(int capacity) {
+    public linearProbingHashTable(int capacity) {
         table = new Entry[capacity];
         size = 0;
     }
