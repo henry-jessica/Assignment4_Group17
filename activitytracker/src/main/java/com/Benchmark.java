@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Benchmark {
 
-    private static final int NUM_KEYS = 100_000;
+    private static final int NUM_KEYS = 10_000_000;
     private static final int[] SAMPLE_SIZES = { 100, 500, 1_000, 5_000, 10_000, 25_000, 50_000, 75_000, 100_000 };
 
     private static List<String> generateKeys(int n) {
