@@ -2,7 +2,7 @@ package com;
 
 public class Main {
     public static void main(String[] args) {
-        SimpleMap<String, String> map = new LinearProbingHashTable<>();
+        SimpleMap<String, String> map = new LinearProbingHashTable<>(16);
 
         map.put("apple", "red fruit");
         map.put("banana", "yellow fruit");
