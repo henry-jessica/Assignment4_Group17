@@ -1,7 +1,5 @@
 package com;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,17 +98,11 @@ public class MerkleTree {
 
     /** SHA-256 hash */
     private static String hash(String input) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = digest.digest(input.getBytes());
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hashed) {
-                hex.append(String.format("%02x", b));
-            }
-            return hex.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 not supported", e);
+        int h = 0;
+        for (char c : input.toCharArray()) {
+            h = 31 * h + c;
         }
+        return Integer.toHexString(h);
     }
 
     /** Node class for Merkle Tree */
