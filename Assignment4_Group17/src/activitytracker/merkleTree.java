@@ -40,7 +40,7 @@ public class merkleTree {
      */
 
     public List<ProofNode> getProof(String data) {
-        String targetHash = hash(data);
+        String targetHash = hash(data); // Hash the target data to find its corresponding leaf.
         Node current = null;
         for (Node leaf : leaves) {
             if (leaf.hash.equals(targetHash)) {
@@ -51,7 +51,7 @@ public class merkleTree {
         if (current == null)
             throw new IllegalArgumentException("Data not found in tree");
 
-        List<ProofNode> proof = new ArrayList<>();
+        List<ProofNode> proof = new ArrayList<>();// List to store the Merkle Proof.
         while (current.parent != null) {
             Node parent = current.parent;
             boolean isLeft = (parent.left != current);
@@ -59,11 +59,14 @@ public class merkleTree {
             proof.add(new ProofNode(sibling.hash, isLeft));
             current = parent;
         }
-        return proof;
+        return proof; // Return the generated Merkle Proof.
     }
 
+    /**
+     * Verifies a Merkle Proof against a given data element and root hash.
+     */
     public static boolean verifyProof(String data, List<ProofNode> proof, String rootHash) {
-        String computed = hash(data);
+        String computed = hash(data); // Hash the data.
         for (ProofNode node : proof) {
             if (node.isLeft) {
                 computed = hash(node.hash + computed);
@@ -74,6 +77,9 @@ public class merkleTree {
         return computed.equals(rootHash);
     }
 
+    /**
+     * Builds the Merkle Tree from a list of nodes (leaves or intermediate nodes).
+     */
     private Node buildTree(List<Node> nodes) {
          // Continue building the tree until only one node (the root) remains.
         while (nodes.size() > 1) {
