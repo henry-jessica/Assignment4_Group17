@@ -96,7 +96,9 @@ public class MerkleTree {
         return nodes.get(0);
     }
 
-    /** SHA-256 hash */
+    /**
+     * Simple polynomial hash function
+     */
     private static String hash(String input) {
         int h = 0;
         for (char c : input.toCharArray()) {
@@ -119,14 +121,5 @@ public class MerkleTree {
             this.left = left;
             this.right = right;
         }
-    }
-
-    /** Optional: exposes leaf hashes for debugging */
-    public List<String> getLeafHashes() {
-        List<String> hashes = new ArrayList<>();
-        for (Node leaf : leaves) {
-            hashes.add(leaf.hash);
-        }
-        return hashes;
     }
 }
