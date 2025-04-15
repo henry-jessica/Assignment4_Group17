@@ -11,8 +11,12 @@ public class merkleTree {
 
     private Node root;
     private List<Node> leaves;
+    /**
+     * Constructs a Merkle Tree from a list of data blocks.
+     */
 
     public merkleTree(List<String> dataBlocks) {
+        // Check for invalid input: null or empty data list.
         if (dataBlocks == null || dataBlocks.isEmpty()) {
             throw new IllegalArgumentException("Input data cannot be empty");
         }
@@ -21,12 +25,19 @@ public class merkleTree {
             Node leaf = new Node(hash(data));
             leaves.add(leaf);
         }
-        this.root = buildTree(leaves);
+        this.root = buildTree(leaves); // Initialize the list to store leaf nodes.
+
     }
 
+    /**
+     * Returns the root hash of the Merkle Tree.
+     */
     public String getRootHash() {
         return root.hash;
     }
+     /**
+     * Generates a Merkle Proof for a given data element.
+     */
 
     public List<ProofNode> getProof(String data) {
         String targetHash = hash(data);
@@ -64,8 +75,9 @@ public class merkleTree {
     }
 
     private Node buildTree(List<Node> nodes) {
+         // Continue building the tree until only one node (the root) remains.
         while (nodes.size() > 1) {
-            List<Node> parents = new ArrayList<>();
+            List<Node> parents = new ArrayList<>();// List to store the parent nodes for the next level.
             for (int i = 0; i < nodes.size(); i += 2) {
                 Node left = nodes.get(i);
                 Node right = (i + 1 < nodes.size()) ? nodes.get(i + 1) : left;
@@ -77,24 +89,28 @@ public class merkleTree {
             }
             nodes = parents;
         }
-        return nodes.get(0);
+        return nodes.get(0);// The last remaining node is the root.
     }
+
+    /**
+     * Hashes the input string using a simple polynomial rolling hash function.
+     */
 
     private static String hash(String input) {
         long hash = 0;
-        long p = 31;
-        long m = 1_000_000_009;
+        long p = 31;// A prime number used as a multiplier.
+        long m = 1_000_000_009; // A large prime number used as the modulus
 
         for (int i = 0; i < input.length(); i++) {
             hash = (hash * p + input.charAt(i)) % m;
         }
 
-        return Long.toString(hash);
+        return Long.toString(hash);// Convert the hash to a String.
     }
 
     /** Internal tree node */
     private static class Node {
-        String hash;
+        String hash; // The hash value of the sibling node
         Node left, right, parent;
 
         Node(String hash) {
