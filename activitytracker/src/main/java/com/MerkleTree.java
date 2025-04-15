@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A cryptographically secure Merkle Tree implementation with directional proof
- * generation.
+ * A merkle tree implementation with hash chaining for ensuring the integrity of
+ * datasets like activity logs
  */
 public class MerkleTree {
 
@@ -89,7 +89,7 @@ public class MerkleTree {
             hash = (hash * p + input.charAt(i)) % m;
         }
 
-        return Long.toHexString(hash);
+        return Long.toString(hash);
     }
 
     /** Internal tree node */
