@@ -1,7 +1,5 @@
 package com;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +43,7 @@ public class MerkleTree {
         List<ProofNode> proof = new ArrayList<>();
         while (current.parent != null) {
             Node parent = current.parent;
-            boolean isLeft = (parent.left != current); // sibling is on left if current is right
+            boolean isLeft = (parent.left != current);
             Node sibling = isLeft ? parent.left : parent.right;
             proof.add(new ProofNode(sibling.hash, isLeft));
             current = parent;
@@ -83,17 +81,15 @@ public class MerkleTree {
     }
 
     private static String hash(String input) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(input.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 not supported", e);
+        long hash = 0;
+        long p = 31;
+        long m = 1_000_000_009;
+
+        for (int i = 0; i < input.length(); i++) {
+            hash = (hash * p + input.charAt(i)) % m;
         }
+
+        return Long.toHexString(hash);
     }
 
     /** Internal tree node */
