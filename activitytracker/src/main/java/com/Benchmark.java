@@ -5,7 +5,7 @@ import java.util.*;
 public class Benchmark {
 
     private static final int NUM_KEYS = 100_000;
-    private static final int SAMPLE_SIZE = 10_000;
+    private static final int[] SAMPLE_SIZES = { 100, 500, 1_000, 5_000, 10_000, 25_000, 50_000, 75_000, 100_000 };
 
     private static List<String> generateKeys(int n) {
         List<String> keys = new ArrayList<>(n);
@@ -15,10 +15,8 @@ public class Benchmark {
         return keys;
     }
 
-    private static void benchmark(String name, SimpleMap<String, Integer> map, List<String> keys) {
-        List<String> sampleKeys = keys.subList(0, SAMPLE_SIZE);
-
-        System.out.println("--- " + name + " ---");
+    private static void benchmark(String name, SimpleMap<String, Integer> map, List<String> keys, int sampleSize) {
+        List<String> sampleKeys = keys.subList(0, sampleSize);
 
         // Insertion
         long start = System.nanoTime();
@@ -41,19 +39,26 @@ public class Benchmark {
         }
         long removeTime = System.nanoTime() - start;
 
-        System.out.printf("Insert Time: %.3f ms\n", insertTime / 1e6);
-        System.out.printf("Get Time: %.3f ms\n", getTime / 1e6);
-        System.out.printf("Remove Time: %.3f ms\n", removeTime / 1e6);
-        System.out.println();
+        System.out.printf(Locale.US, "%s,%d,%.3f,%.3f,%.3f\n",
+                name, sampleSize,
+                insertTime / 1e6,
+                getTime / 1e6,
+                removeTime / 1e6);
     }
 
     public static void main(String[] args) {
         List<String> keys = generateKeys(NUM_KEYS);
 
-        SimpleMap<String, Integer> linearProbingMap = new LinearProbingHashTable<>(NUM_KEYS);
-        SimpleMap<String, Integer> separateChainingMap = new SeparateChainingHashTable<>(NUM_KEYS);
+        System.out.println("MapType,SampleSize,InsertTime(ms),GetTime(ms),RemoveTime(ms)");
 
-        benchmark("Linear Probing", linearProbingMap, keys);
-        benchmark("Separate Chaining", separateChainingMap, keys);
+        for (int sampleSize : SAMPLE_SIZES) {
+            SimpleMap<String, Integer> linearProbingMap = new LinearProbingHashTable<>(NUM_KEYS);
+            benchmark("LinearProbing", linearProbingMap, keys, sampleSize);
+        }
+
+        for (int sampleSize : SAMPLE_SIZES) {
+            SimpleMap<String, Integer> separateChainingMap = new SeparateChainingHashTable<>(NUM_KEYS);
+            benchmark("SeparateChaining", separateChainingMap, keys, sampleSize);
+        }
     }
 }
